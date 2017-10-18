@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+/*!
+ * \brief MainWindow::MainWindow - konstruktor klasy
+ * \param parent - wskaźnik na obiek nadrzędny
+ */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -8,15 +12,29 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->dialCelsius, SIGNAL(valueChanged(int), ui->lcdCelsius, SLOT(display(int));
-    connect(ui->dialCelsius, SIGNAL(valueChanged(int), converter, SLOT(setTempCelsius(int));
-    connect(converter, SIGNAL(tempCelsiusChanged(int)), ui->dialCelsius, SLOT(setValue(int));
+    /*!
+     * wywoływania metod aktywowane w chwili zmiany wartości widgetów Dial
+     */
+    connect(ui->dialCelsius, SIGNAL(valueChanged(int)), converter, SLOT(celsiusDialChanged(int)));
+    connect(ui->dialFahrenheit, SIGNAL(valueChanged(int)), converter, SLOT(fahrenheitDialChanged(int)));
 
-    connect(ui->dialFahrenheit, SIGNAL(valueChanged(int)), ui->lcdFahrenheit, SLOT(display(int));
-    connect(ui->dialFahrenheit, SIGNAL(valueChanged(int)), converter, SLOT(setTempFahrenheit(int));
-    connect(converter, SIGNAL(tempFahrenheitChanged(int)), ui->dialFahrenheit, SLOT(setValue(int));
+    /*!
+     * wywoływania metod zmieniających wartości pokręteł
+     */
+    connect(converter, SIGNAL(setCelsiusDial(int)), ui->dialCelsius, SLOT(setValue(int)));
+    connect(converter, SIGNAL(setFahrenheitDial(int)), ui->dialFahrenheit, SLOT(setValue(int)));
+
+    /*!
+     * wywoływania metod zmieniających wartości wyświetlane na widgetach lcd
+     */
+    connect(converter, SIGNAL(displayCelsius(QString)), ui->lcdCelsius, SLOT(display(QString)));
+    connect(converter, SIGNAL(displayFahrenheit(QString)), ui->lcdFahrenheit, SLOT(display(QString)));
+
 }
 
+/*!
+ * \brief MainWindow::~MainWindow - destruktor klasy
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
