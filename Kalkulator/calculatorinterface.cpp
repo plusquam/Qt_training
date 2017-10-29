@@ -12,6 +12,9 @@ CalculatorInterface::CalculatorInterface(QWidget *parent) :
     QSignalMapper *numberMapper = new QSignalMapper;
 
     /////////////////////
+    connect(ui->buttonZero,SIGNAL(clicked()), numberMapper, SLOT(map()));
+    numberMapper->setMapping(ui->buttonZero,0);
+
     connect(ui->buttonOne,SIGNAL(clicked()), numberMapper, SLOT(map()));
     numberMapper->setMapping(ui->buttonOne,1);
 
@@ -70,31 +73,141 @@ CalculatorInterface::CalculatorInterface(QWidget *parent) :
 
     connect(ui->buttonCalculate,SIGNAL(clicked()), m_calculator, SLOT(calcClicked()));
 
-    connect(m_calculator, SIGNAL(showNumber(QString)), ui->entryLabel, SLOT(setText(QString)));
+    connect(m_calculator, SIGNAL(showNumber(QString)), ui->numberLabel, SLOT(setText(QString)));
+    connect(m_calculator, SIGNAL(showOperations(QString)), ui->operationsBrowser, SLOT(setPlainText(QString)));
+
 
     //////////
-    QSignalMapper *radioButtonMapper = new QSignalMapper;
+    QSignalMapper *dataBaseButtonMapper = new QSignalMapper;
 
-    connect(ui->radioButtonDec,SIGNAL(clicked(bool)), radioButtonMapper, SLOT(map()));
-    radioButtonMapper->setMapping(ui->radioButtonDec,10);
+    connect(ui->radioButtonDec,SIGNAL(clicked(bool)), dataBaseButtonMapper, SLOT(map()));
+    dataBaseButtonMapper->setMapping(ui->radioButtonDec,DATA_BASE_DEC);
 
-    connect(ui->radioButtonBin,SIGNAL(clicked(bool)), radioButtonMapper, SLOT(map()));
-    radioButtonMapper->setMapping(ui->radioButtonBin,2);
+    connect(ui->radioButtonBin,SIGNAL(clicked(bool)), dataBaseButtonMapper, SLOT(map()));
+    dataBaseButtonMapper->setMapping(ui->radioButtonBin,DATA_BASE_BIN);
 
-    connect(ui->radioButtonQuat,SIGNAL(clicked(bool)), radioButtonMapper, SLOT(map()));
-    radioButtonMapper->setMapping(ui->radioButtonQuat,4);
+    connect(ui->radioButtonQuat,SIGNAL(clicked(bool)), dataBaseButtonMapper, SLOT(map()));
+    dataBaseButtonMapper->setMapping(ui->radioButtonQuat,DATA_BASE_QUAT);
 
-    connect(ui->radioButtonOct,SIGNAL(clicked(bool)), radioButtonMapper, SLOT(map()));
-    radioButtonMapper->setMapping(ui->radioButtonOct,8);
+    connect(ui->radioButtonOct,SIGNAL(clicked(bool)), dataBaseButtonMapper, SLOT(map()));
+    dataBaseButtonMapper->setMapping(ui->radioButtonOct,DATA_BASE_OCT);
 
-    connect(ui->radioButtonHex,SIGNAL(clicked(bool)), radioButtonMapper, SLOT(map()));
-    radioButtonMapper->setMapping(ui->radioButtonHex,16);
+    connect(ui->radioButtonHex,SIGNAL(clicked(bool)), dataBaseButtonMapper, SLOT(map()));
+    dataBaseButtonMapper->setMapping(ui->radioButtonHex,DATA_BASE_HEX);
 
-    connect(radioButtonMapper, SIGNAL(mapped(int)), m_calculator, SLOT(baseEntered(int)));
+    connect(dataBaseButtonMapper, SIGNAL(mapped(int)), m_calculator, SLOT(baseEntered(int)));
+    connect(dataBaseButtonMapper, SIGNAL(mapped(int)), this, SLOT(activateButtons(int)));
+
     ////////
+    QSignalMapper *dataSizeButtonMapper = new QSignalMapper;
+
+    connect(ui->radioButtonChar,SIGNAL(clicked(bool)), dataSizeButtonMapper, SLOT(map()));
+    dataSizeButtonMapper->setMapping(ui->radioButtonChar, DATA_SIZE_CHAR);
+
+    connect(ui->radioButtonShort,SIGNAL(clicked(bool)), dataSizeButtonMapper, SLOT(map()));
+    dataSizeButtonMapper->setMapping(ui->radioButtonShort, DATA_SIZE_SHORT);
+
+    connect(ui->radioButtonInt,SIGNAL(clicked(bool)), dataSizeButtonMapper, SLOT(map()));
+    dataSizeButtonMapper->setMapping(ui->radioButtonInt, DATA_SIZE_INT);
+
+    connect(ui->radioButtonLong,SIGNAL(clicked(bool)), dataSizeButtonMapper, SLOT(map()));
+    dataSizeButtonMapper->setMapping(ui->radioButtonLong, DATA_SIZE_LONG);
+
+    connect(dataSizeButtonMapper, SIGNAL(mapped(int)), m_calculator, SLOT(sizeEntered(int)));
 }
 
 CalculatorInterface::~CalculatorInterface()
 {
     delete ui;
+}
+
+void CalculatorInterface::activateButtons(int _base)
+{
+    switch(_base)
+    {
+    case DATA_BASE_BIN:
+        ui->buttonTwo->setEnabled(false);
+        ui->buttonThree->setEnabled(false);
+        ui->buttonFour->setEnabled(false);
+        ui->buttonFive->setEnabled(false);
+        ui->buttonSix->setEnabled(false);
+        ui->buttonSeven->setEnabled(false);
+        ui->buttonEight->setEnabled(false);
+        ui->buttonNine->setEnabled(false);
+        ui->buttonA->setEnabled(false);
+        ui->buttonB->setEnabled(false);
+        ui->buttonC->setEnabled(false);
+        ui->buttonD->setEnabled(false);
+        ui->buttonE->setEnabled(false);
+        ui->buttonF->setEnabled(false);
+        break;
+
+    case DATA_BASE_QUAT:
+        ui->buttonTwo->setEnabled(true);
+        ui->buttonThree->setEnabled(true);
+        ui->buttonFour->setEnabled(false);
+        ui->buttonFive->setEnabled(false);
+        ui->buttonSix->setEnabled(false);
+        ui->buttonSeven->setEnabled(false);
+        ui->buttonEight->setEnabled(false);
+        ui->buttonNine->setEnabled(false);
+        ui->buttonA->setEnabled(false);
+        ui->buttonB->setEnabled(false);
+        ui->buttonC->setEnabled(false);
+        ui->buttonD->setEnabled(false);
+        ui->buttonE->setEnabled(false);
+        ui->buttonF->setEnabled(false);
+        break;
+
+    case DATA_BASE_OCT:
+        ui->buttonTwo->setEnabled(true);
+        ui->buttonThree->setEnabled(true);
+        ui->buttonFour->setEnabled(true);
+        ui->buttonFive->setEnabled(true);
+        ui->buttonSix->setEnabled(true);
+        ui->buttonSeven->setEnabled(true);
+        ui->buttonEight->setEnabled(false);
+        ui->buttonNine->setEnabled(false);
+        ui->buttonA->setEnabled(false);
+        ui->buttonB->setEnabled(false);
+        ui->buttonC->setEnabled(false);
+        ui->buttonD->setEnabled(false);
+        ui->buttonE->setEnabled(false);
+        ui->buttonF->setEnabled(false);
+        break;
+
+    case DATA_BASE_DEC:
+        ui->buttonTwo->setEnabled(true);
+        ui->buttonThree->setEnabled(true);
+        ui->buttonFour->setEnabled(true);
+        ui->buttonFive->setEnabled(true);
+        ui->buttonSix->setEnabled(true);
+        ui->buttonSeven->setEnabled(true);
+        ui->buttonEight->setEnabled(true);
+        ui->buttonNine->setEnabled(true);
+        ui->buttonA->setEnabled(false);
+        ui->buttonB->setEnabled(false);
+        ui->buttonC->setEnabled(false);
+        ui->buttonD->setEnabled(false);
+        ui->buttonE->setEnabled(false);
+        ui->buttonF->setEnabled(false);
+        break;
+
+    case DATA_BASE_HEX:
+        ui->buttonTwo->setEnabled(true);
+        ui->buttonThree->setEnabled(true);
+        ui->buttonFour->setEnabled(true);
+        ui->buttonFive->setEnabled(true);
+        ui->buttonSix->setEnabled(true);
+        ui->buttonSeven->setEnabled(true);
+        ui->buttonEight->setEnabled(true);
+        ui->buttonNine->setEnabled(true);
+        ui->buttonA->setEnabled(true);
+        ui->buttonB->setEnabled(true);
+        ui->buttonC->setEnabled(true);
+        ui->buttonD->setEnabled(true);
+        ui->buttonE->setEnabled(true);
+        ui->buttonF->setEnabled(true);
+        break;
+    }
 }

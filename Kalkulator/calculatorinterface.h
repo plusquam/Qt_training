@@ -18,6 +18,9 @@ public:
     explicit CalculatorInterface(QWidget *parent = 0);
     ~CalculatorInterface();
 
+public slots:
+    void activateButtons(int);
+
 private:
     Ui::CalculatorInterface *ui;
     Calculator *m_calculator;

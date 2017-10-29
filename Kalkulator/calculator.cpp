@@ -1,7 +1,7 @@
 #include "calculator.h"
 
-Calculator::Calculator(QObject *parent) :
-    QObject(parent),
+Calculator::Calculator(QObject *_parent) :
+    QObject(_parent),
     m_lastValue(0),
     m_currValue(0),
     m_operationFlag(0),
@@ -21,153 +21,238 @@ void Calculator::clearData()
 
 void Calculator::numEntered(int _number)
 {
-    this->m_currValue *= 10;
-    this->m_currValue += _number;
+    switch(this->m_dataSize)
+    {
+    case DATA_SIZE_CHAR:
+        this->m_currValue = (long)addNewNum<char>(_number);
+        sendToShow<char>((char)this->m_currValue);
+        break;
 
-    emit showNumber(QString::number(this->m_currValue));
+    case DATA_SIZE_SHORT:
+        this->m_currValue = (long)addNewNum<short>(_number);
+        sendToShow<short>((short)this->m_currValue);
+        break;
+
+    case DATA_SIZE_INT:
+        this->m_currValue = (long)addNewNum<int>(_number);
+        sendToShow<int>((int)this->m_currValue);
+        break;
+
+    case DATA_SIZE_LONG:
+        this->m_currValue = (long)addNewNum<long>(_number);
+        sendToShow<long>(this->m_currValue);
+        break;
+    }
 }
 
 void Calculator::baseEntered(int _base)
 {
     this->m_dataBase = (char)_base;
 
-    emit showNumber(QString::number(this->m_currValue, _base));
+    if(this->m_currValue != 0)
+        sendToShow<long>(this->m_currValue);
+    else
+        if(this->m_lastValue != 0)
+            sendToShow<long>(this->m_lastValue);
+        else
+            sendToShow<int>(0);
+}
+
+void Calculator::sizeEntered(int _size)
+{
+    this->m_dataSize = _size;
 }
 
 void Calculator::clearClicked()
 {
-    m_currValue = 0;
+    this->m_currValue = 0;
 
-    emit showNumber(QString::number(this->m_currValue));
+    sendToShow<long>(this->m_currValue);
 }
 
 void Calculator::allClearClicked()
 {
     this->clearData();
 
-    emit showNumber(QString::number(this->m_currValue));
+    this->m_operations.clear();
+    emit showOperations(this->m_operations);
+
+    sendToShow<long>(this->m_currValue);
 }
 
 void Calculator::addClicked()
 {
-    if(m_operationFlag == 0)
+    if(this->m_operationFlag == 0)
     {
         this->m_lastValue = this->m_currValue;
         this->m_currValue = 0;
+
+        this->m_operations.append(QString::number(this->m_lastValue));
+        this->m_operations.append('+');
+        emit showOperations(this->m_operations);
     }
     else
-        this->calculate(false);
+    {
+        this->m_operations.append(QString::number(this->m_currValue));
+        this->m_operations.append('+');
+        this->selectCalcType(false);
+    }
 
-    m_operationFlag = FLAG_OPER_ADD;
+    this->m_operationFlag = FLAG_OPER_ADD;
 }
 
 void Calculator::subClicked()
 {
-    if(m_operationFlag == 0)
+    if(this->m_operationFlag == 0)
     {
         this->m_lastValue = this->m_currValue;
         this->m_currValue = 0;
+
+        this->m_operations.append(QString::number(this->m_lastValue));
+        this->m_operations.append('-');
+        emit showOperations(this->m_operations);
     }
     else
-        this->calculate(false);
+    {
+        this->m_operations.append(QString::number(this->m_currValue));
+        this->m_operations.append('-');
+        this->selectCalcType(false);
+    }
 
-    m_operationFlag = FLAG_OPER_SUB;
+    this->m_operationFlag = FLAG_OPER_SUB;
 }
 
 void Calculator::multiClicked()
 {
-    if(m_operationFlag == 0)
+    if(this->m_operationFlag == 0)
     {
         this->m_lastValue = this->m_currValue;
         this->m_currValue = 0;
+
+        this->m_operations.append(QString::number(this->m_lastValue));
+        this->m_operations.append('*');
+        emit showOperations(this->m_operations);
     }
     else
-        this->calculate(false);
+    {
+        this->m_operations.append(QString::number(this->m_currValue));
+        this->m_operations.append('*');
+        this->selectCalcType(false);
+    }
 
-    m_operationFlag = FLAG_OPER_MLT;
+    this->m_operationFlag = FLAG_OPER_MLT;
 }
 
 void Calculator::divClicked()
 {
-    if(m_operationFlag == 0)
+    if(this->m_operationFlag == 0)
     {
         this->m_lastValue = this->m_currValue;
         this->m_currValue = 0;
+
+        this->m_operations.append(QString::number(this->m_lastValue));
+        this->m_operations.append('/');
+        emit showOperations(this->m_operations);
     }
     else
-        this->calculate(false);
+    {
+        this->m_operations.append(QString::number(this->m_currValue));
+        this->m_operations.append('/');
+        this->selectCalcType(false);
+    }
 
-    m_operationFlag = FLAG_OPER_DIV;
+    this->m_operationFlag = FLAG_OPER_DIV;
 }
 
 void Calculator::calcClicked()
 {
-    this->calculate(true);
+    this->m_operations.append(QString::number(this->m_currValue));
+
+    this->selectCalcType(true);
 }
 
-void Calculator::calculate(bool _clearData)
+void Calculator::selectCalcType(bool _clear)
 {
-    if(m_operationFlag == 0)  return;
-    else
-        if(m_operationFlag == FLAG_OPER_ADD)
-        {
-            this->m_lastValue += this->m_currValue;
+    switch(this->m_dataSize)
+    {
+    case DATA_SIZE_CHAR:
+        this->calculate<char>(_clear);
+        break;
 
-            emit showNumber(QString::number(this->m_lastValue));
+    case DATA_SIZE_SHORT:
+        this->calculate<short>(_clear);
+        break;
 
-            this->m_currValue = 0;
-            if(_clearData)
-            {
-                m_operationFlag = 0;
-                this->m_lastValue = 0;
-            }
-        }
-        else
-            if(m_operationFlag == FLAG_OPER_SUB)
-                {
-                    this->m_lastValue -= this->m_currValue;
+    case DATA_SIZE_INT:
+        this->calculate<int>(_clear);
+        break;
 
-                    emit showNumber(QString::number(this->m_lastValue));
+    case DATA_SIZE_LONG:
+        this->calculate<long>(_clear);
+        break;
+    }
+}
 
-                    this->m_currValue = 0;
-                    if(_clearData)
-                    {
-                        m_operationFlag = 0;
-                        this->m_lastValue = 0;
-                    }
+template<typename TYPE>
+void Calculator::calculate(bool _isCalcClicked)
+{
+    TYPE tempLastVal = (TYPE)this->m_lastValue, tempCurrVal = (TYPE)this->m_currValue;
 
-                }
-                else
-                    if(m_operationFlag == FLAG_OPER_MLT)
-                    {
-                        this->m_lastValue *= this->m_currValue;
+    switch(this->m_operationFlag)
+    {
+    case FLAG_OPER_ADD:
+        tempLastVal += tempCurrVal;
+        break;
 
-                        emit showNumber(QString::number(this->m_lastValue));
+    case FLAG_OPER_SUB:
+        tempLastVal -= tempCurrVal;
+        break;
 
-                        this->m_currValue = 0;
-                        if(_clearData)
-                        {
-                            m_operationFlag = 0;
-                            this->m_lastValue = 0;
-                        }
+    case FLAG_OPER_MLT:
+        tempLastVal *= tempCurrVal;
+        break;
 
-                    }
-                    else
-                        if(m_operationFlag == FLAG_OPER_DIV)
-                        {
-                            this->m_lastValue /= this->m_currValue;
+    case FLAG_OPER_DIV:
+        tempLastVal /= tempCurrVal;
+        break;
 
-                            emit showNumber(QString::number(this->m_lastValue));
+    default:
+        return;
+    }
 
-                            this->m_currValue = 0;
-                            if(_clearData)
-                            {
-                                m_operationFlag = 0;
-                                this->m_lastValue = 0;
-                            }
+    this->m_lastValue = (long)tempLastVal;
 
-                        }
+    sendToShow<TYPE>(tempLastVal);
 
+    this->m_currValue = 0;
+
+    if(_isCalcClicked)
+    {
+        m_operationFlag = 0;
+
+        this->m_operations.append(QString('='));
+        this->m_operations.append(QString::number(this->m_lastValue));
+    }
+
+    emit showOperations(this->m_operations);
+
+    if(_isCalcClicked)
+        m_operations.clear();
+}
+
+template<typename TYPE>
+void Calculator::sendToShow(TYPE _numb)
+{
+    emit showNumber(QString::number(_numb, (int)this->m_dataBase).toUpper());
 }
 
 
+template<typename TYPE>
+TYPE Calculator::addNewNum(int _numb)
+{
+    TYPE tempVal = (TYPE)this->m_currValue;
+    tempVal *= (TYPE)this->m_dataBase;
+    tempVal += _numb;
+
+    return tempVal;
+}

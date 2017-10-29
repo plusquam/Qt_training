@@ -26,16 +26,18 @@ class Calculator : public QObject
 {
     Q_OBJECT
 public:
-    explicit Calculator(QObject *parent = 0);
+    explicit Calculator(QObject *_parent = 0);
     ~Calculator();
     void clearData();
 
 signals:
     void showNumber(QString);
+    void showOperations(QString);
 
 public slots:
     void numEntered(int);
     void baseEntered(int);
+    void sizeEntered(int);
 
     void clearClicked();
     void allClearClicked();
@@ -55,7 +57,18 @@ private:
     char m_dataBase;
     char m_dataSize;
 
-    void calculate(bool _clearData);
+    QString m_operations;
+
+    void selectCalcType(bool _clear);
+
+    template<typename TYPE>
+    void calculate(bool _isCalcClicked);
+
+    template<typename TYPE>
+    void sendToShow(TYPE _numb);
+
+    template<typename TYPE>
+    TYPE addNewNum(int _numb);
 
 };
 
