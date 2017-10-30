@@ -3,6 +3,10 @@
 
 #include "calculator.h"
 
+/*!
+ * \brief CalculatorInterface::CalculatorInterface - konstruktor klasy
+ * \param parent - wskaźnik na obiek nadrzędny
+ */
 CalculatorInterface::CalculatorInterface(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CalculatorInterface),
@@ -11,7 +15,10 @@ CalculatorInterface::CalculatorInterface(QWidget *parent) :
     ui->setupUi(this);
     QSignalMapper *numberMapper = new QSignalMapper;
 
-    /////////////////////
+    /*!
+     *  Przypisanie sygnałów wciśnięcia klawiszy cyfr do obiektu numberMapper
+     */
+
     connect(ui->buttonZero,SIGNAL(clicked()), numberMapper, SLOT(map()));
     numberMapper->setMapping(ui->buttonZero,0);
 
@@ -61,7 +68,10 @@ CalculatorInterface::CalculatorInterface(QWidget *parent) :
     numberMapper->setMapping(ui->buttonF,15);
 
     connect(numberMapper, SIGNAL(mapped(int)), m_calculator, SLOT(numEntered(int)));
-/////////////////////
+
+    /*!
+     *  Przypisanie sygnałów wciśnięcia klawiszy działań
+     */
 
     connect(ui->buttonAdd,SIGNAL(clicked()), m_calculator, SLOT(addClicked()));
     connect(ui->buttonSubtrackt,SIGNAL(clicked()), m_calculator, SLOT(subClicked()));
@@ -77,7 +87,10 @@ CalculatorInterface::CalculatorInterface(QWidget *parent) :
     connect(m_calculator, SIGNAL(showOperations(QString)), ui->operationsBrowser, SLOT(setPlainText(QString)));
 
 
-    //////////
+    /*!
+     *  Przypisanie sygnałów wciśnięcia przełączników podstawy systemu liczbowego do obiektu dataBaseButtonMapper
+     */
+
     QSignalMapper *dataBaseButtonMapper = new QSignalMapper;
 
     connect(ui->radioButtonDec,SIGNAL(clicked(bool)), dataBaseButtonMapper, SLOT(map()));
@@ -98,7 +111,10 @@ CalculatorInterface::CalculatorInterface(QWidget *parent) :
     connect(dataBaseButtonMapper, SIGNAL(mapped(int)), m_calculator, SLOT(baseEntered(int)));
     connect(dataBaseButtonMapper, SIGNAL(mapped(int)), this, SLOT(activateButtons(int)));
 
-    ////////
+    /*!
+     *  Przypisanie sygnałów wciśnięcia przełączników długości słowa do obiektu dataSizeButtonMapper
+     */
+
     QSignalMapper *dataSizeButtonMapper = new QSignalMapper;
 
     connect(ui->radioButtonChar,SIGNAL(clicked(bool)), dataSizeButtonMapper, SLOT(map()));
@@ -116,11 +132,18 @@ CalculatorInterface::CalculatorInterface(QWidget *parent) :
     connect(dataSizeButtonMapper, SIGNAL(mapped(int)), m_calculator, SLOT(sizeEntered(int)));
 }
 
+/*!
+ * \brief CalculatorInterface::~CalculatorInterface - destruktor klasy
+ */
 CalculatorInterface::~CalculatorInterface()
 {
     delete ui;
 }
 
+/*!
+ * \brief CalculatorInterface::activateButtons - metoda aktywowania odpowiednich klawiszy cyfr
+ * \param _base - wybrana postawa systemu liczbowego
+ */
 void CalculatorInterface::activateButtons(int _base)
 {
     switch(_base)

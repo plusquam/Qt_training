@@ -1,3 +1,19 @@
+/*!
+  Klasa Calculator służy do przechowywania właściwości i metod
+  wykorzystywanych do stworzenia narzędzi służacych do obsługi
+  interfejsu kalkulatora zbudowanego wewnątrz klasy CalculatorInterface.
+
+  Klasa posiada:
+  * właściwości dziedziczone z klasy QObject,
+  * metody oraz atrybuty klasy pozwalające na wykonywanie działań kalkulatora.
+  * sygnały do powiadamiania o zmianach,
+  * zmienne prywatne do przechowywania bierzącej lub ostatniej wartości liczb,
+  * flagi: działań, długości słowa oraz podstaw liczb
+
+  Damian Świerk, październik 2017
+
+*/
+
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
@@ -22,57 +38,59 @@
 #define DATA_SIZE_INT sizeof(int)
 #define DATA_SIZE_LONG sizeof(long)
 
+/*!
+ * \brief Klasa Calculator - pakiet narzędzi do obsługi kalkulatora
+ *
+ * Klasa Calculator służy do przechowywania właściwości i metod
+ * wykorzystywanych do obsługi działań graficznego kalkulatora klasy CalculatorInterface.
+ */
 class Calculator : public QObject
 {
     Q_OBJECT
 public:
     explicit Calculator(QObject *_parent = 0);
-    ~Calculator();
-    void clearData();
+    void clearData(); ///< metoda przywracająca domyśle wartości atrybutów klasy
 
 signals:
-    void showNumber(QString);
-    void showOperations(QString);
+    void showNumber(QString); ///< sygnał dokonywujący wyświetlenia podanego ciągu znaków w numberLabel
+    void showOperations(QString); ///< sygnał dokonywujący wyświetlenia podanego ciągu znaków w operationsBrowser
 
 public slots:
-    void numEntered(int);
-    void baseEntered(int);
-    void sizeEntered(int);
+    void numEntered(int);   ///< metoda wywołująca proces wprowadzania kolejnej cyfry
+    void baseEntered(int);  ///< metoda zmieniająca podstawę wprowadzanych liczb
+    void sizeEntered(int);  ///< metoda zmieniająca rozmiar operowanych słów
 
-    void clearClicked();
-    void allClearClicked();
+    void clearClicked();    ///< metoda wykonująca proces po wciśnięciu klawisza C
+    void allClearClicked(); ///< metoda wykonująca proces po wciśnięciu klawisza AC
 
-    void addClicked();
-    void subClicked();
-    void multiClicked();
-    void divClicked();
+    void addClicked();      ///< metoda wykonująca proces po wciśnięciu klawisza +
+    void subClicked();      ///< metoda wykonująca proces po wciśnięciu klawisza -
+    void multiClicked();    ///< metoda wykonująca proces po wciśnięciu klawisza *
+    void divClicked();      ///< metoda wykonująca proces po wciśnięciu klawisza /
 
-    void calcClicked();
+    void calcClicked();     ///< metoda wykonująca proces po wciśnięciu klawisza =
 
 private:
-    long m_lastValue;
-    long m_currValue;
-    char m_operationFlag;
+    long m_lastValue;       ///< atrybut przechowujący wynik, bądź poprzednio wprowadzoną liczbę
+    long m_currValue;       ///< atrybut przechowujący ostatnio wprowadzoną liczbę
+    char m_operationFlag;   ///< flaga wybranego ostatniego działania
 
-    char m_dataBase;
-    char m_dataSize;
+    char m_dataBase;        ///< atrybut przechowujący podstawę liczby
+    char m_dataSize;        ///< atrybut przechowujący długość słowa
 
-    QString m_operations;
+    QString m_operations;   ///< atrybut przechowujący ciąg operacji
 
-    void selectCalcType(bool _clear);
-
-    template<typename TYPE>
-    void calculate(bool _isCalcClicked);
+    void selectCalcType(bool _isCalcClicked);   ///< metoda wybierająca odpowiednie działanie na liczbach
 
     template<typename TYPE>
-    void sendToShow(TYPE _numb);
+    void calculate(bool _isCalcClicked);    ///< szablon metody wykonującej obliczenia dla odpowiedniego typu danych
 
     template<typename TYPE>
-    TYPE addNewNum(int _numb);
+    void sendToShow(TYPE _numb);    ///< szablon metody wywołującej sygnał showNumber() dla odpowiedniego typu danych
+
+    template<typename TYPE>
+    TYPE addNewNum(int _numb);      ///< szablon metody dopisującej kolejny znak dla odpowiedniej długości słowa
 
 };
-
-
-
 
 #endif // CALCULATOR_H
