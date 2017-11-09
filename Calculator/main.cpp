@@ -23,6 +23,7 @@
 
 
 */
+
 #include "calculatorinterface.h"
 #include <QApplication>
 #include <QDebug>
