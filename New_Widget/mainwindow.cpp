@@ -120,6 +120,10 @@ void MainWindow::on_treeView_clicked(const QModelIndex &index)
             ui->dirListTextEdit->clear();
             ui->dirName->clear();
         }
+
+    QMultiMap<QString, QString> _dirMap = m_analyzer->getDirMap();
+
+    ui->dirVisualiserWidget->setDirMap(_dirMap);
 }
 
 /*!

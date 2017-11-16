@@ -43,7 +43,7 @@ void DirAnalyzer::passNewDir(const QModelIndex &index)
         m_dir->setSorting(QDir::Name | QDir::Reversed);
 
         QDirIterator iterator(*m_dir, QDirIterator::Subdirectories);
-
+        qDebug() << endl << m_dir->absolutePath() << endl;
         while (iterator.hasNext())
         {
             iterator.next();
@@ -158,51 +158,65 @@ QString DirAnalyzer::getPath()
     return m_fileInfo->absoluteFilePath();
 }
 
-void DirAnalyzer::getDirMap(QVector< QStringList > &filesPaths, QVector<qint64> &filesSizes)
+/*!
+ * \brief DirAnalyzer::getDirMap
+ * Metoda zwracająca gotową mapę podkatalogów wraz z ich rozmiarami.
+ */
+QMultiMap< QString, QString > DirAnalyzer::getDirMap()
 {
-    filesPaths.clear();
-    filesPaths.begin();
-    filesSizes.clear();
-    filesSizes.begin();
-
-    qint64 _size = 0;
-    bool _isFirstIter = true;
+    QMultiMap< QString, QString > _outputMap;
+    QMap< QString, qint64 > _sizeMap;
 
     foreach(QFileInfo _file, m_dirContent)
     {
-        QDir _fileDir = _file.absoluteDir();
-        QStringList _tempList;
+        QString _dirPath = _file.absoluteDir().absolutePath();
 
-        if(_isFirstIter)
+        _dirPath.remove(m_dir->absolutePath());
+        QStringList _dirs = _dirPath.split("/");
+
+        QString _prevPath(".");
+
+        foreach(QString _dirIter, _dirs)
         {
-            _tempList << _fileDir.absolutePath();
-            _fileDir.cdUp();
-            _tempList << _fileDir.absolutePath();
+            QString _tempPath = "/" + _dirIter;
 
-            filesPaths.push_back(_tempList);
-
-            _size += _file.size();
-            _isFirstIter = false;
-        }
-        else
-        {
-            if(filesPaths.last()[0] == _fileDir.absolutePath())
+            if(_dirIter == "")
             {
+                qint64 _size = _sizeMap.value(".");
                 _size += _file.size();
+                _sizeMap.insert(".", _size);
             }
             else
             {
-                filesSizes.push_back(_size);
-                _size = 0;
+                if(!_outputMap.contains(_prevPath, _tempPath))
+                    _outputMap.insert(_prevPath, _tempPath);
 
-                _tempList << _fileDir.absolutePath();
-                _fileDir.cdUp();
-                _tempList << _fileDir.absolutePath();
+                qint64 _size = 0;
 
-                filesPaths.push_back(_tempList);
+                if(_sizeMap.contains(_prevPath + _tempPath))
+                {
+                    _size = _sizeMap.value(_prevPath + _tempPath);
+                    _size += _file.size();
+                }
+                _sizeMap.insert(_prevPath + _tempPath, _size);
+
+                if(_prevPath == ".")
+                    _prevPath = _tempPath;
+                else
+                    _prevPath += _tempPath;
             }
         }
     }
+
+    QMapIterator<QString, qint64> iter(_sizeMap);
+
+    while (iter.hasNext()) {
+        iter.next();
+        _outputMap.insert(iter.key(), DIR_SIZE_PREFIX + QString::number(iter.value()));
+    }
+    qDebug() << _outputMap;
+
+    return _outputMap;
 }
 
 /*!

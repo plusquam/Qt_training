@@ -1,5 +1,5 @@
 /*!
-  \date 8.11.2017r.
+  \date 15.11.2017r.
   \author Damian Świerk
   */
 
@@ -14,11 +14,14 @@
 #include <QStringList>
 #include <QString>
 #include <QDirIterator>
+#include <QMultiMap>
+
+#define DIR_SIZE_PREFIX "$S$"
 
 /*!
  * \brief Klasa DirAnalyzer
  * Klasa służy do przetwarzania informacji o danych zamieszczonych w podanej lokalizacji.
- * Pozwala na pozyskanie listy plików znajdujących się w katalogu.
+ * Pozwala na rekursywne pozyskanie listy plików znajdujących się w katalogu.
  * Posiada funkcjonalność otwierania plików tekstowych.
  */
 class DirAnalyzer : public QObject
@@ -36,8 +39,7 @@ public:
     QStringList getFileList();      ///< metoda zwracająca zawartość katalogu
     QString getFileName();          ///< metoda zwracająca nazwe pliku
     QString getPath();              ///< metoda zwracająca podaną ścieżkę
-    void getDirMap(QVector< QStringList >& filesPaths,
-                   QVector<qint64>& filesSizes);    ///< metoda zwracająca mapę podkatalogów
+    QMultiMap< QString, QString > getDirMap();    ///< metoda zwracająca mapę podkatalogów
 
     void setFilter(QString suffix); ///< metoda ustawiająca filtr plików
 
