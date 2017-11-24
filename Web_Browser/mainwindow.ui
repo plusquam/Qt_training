@@ -15,6 +15,12 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" rowspan="2">
+     <widget class="QWebView" name="webView">
+      <zorder>gridLayoutWidget</zorder>
+      <zorder>widget</zorder>
+     </widget>
+    </item>
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="sizeConstraint">
@@ -64,21 +70,87 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="0">
-     <widget class="QWebView" name="webView" native="true"/>
-    </item>
-    <item row="2" column="0">
-     <widget class="QProgressBar" name="loadProgressBar">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>10</height>
-       </size>
+    <item row="4" column="0">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetFixedSize</enum>
       </property>
-      <property name="value">
-       <number>0</number>
-      </property>
-     </widget>
+      <item row="2" column="0">
+       <widget class="QProgressBar" name="loadProgressBar">
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>10</height>
+         </size>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QWidget" name="widget" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>300</width>
+          <height>100</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="1">
+          <widget class="QSlider" name="zoomSlider">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="minimum">
+            <number>10</number>
+           </property>
+           <property name="maximum">
+            <number>500</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="zoomValueLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>100</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -88,7 +160,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
@@ -107,7 +179,7 @@
   <customwidget>
    <class>QWebView</class>
    <extends>QWidget</extends>
-   <header location="global">qwebview.h</header>
+   <header>QtWebKitWidgets/QWebView</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

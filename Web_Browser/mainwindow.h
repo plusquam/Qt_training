@@ -3,10 +3,11 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <QWebView>
+#include <QWebHistory>
 
-#include <webnavigator.h>
 
-#define HOME_PAGE google;
+#define HOME_PAGE "http://google.pl"
 
 namespace Ui {
 class MainWindow;
@@ -21,14 +22,23 @@ public:
     ~MainWindow();
 
 signals:
-    void urlInsertedSignal(QString);
+    void refreshPage();
+    void stopPageLoad();
 
 public slots:
     void urlInserted();
+    void refreshUrlBar(QUrl _url);
+
+    void startPageLoad();
+    void finishPageLoad();
+
+    void refreshClicked();
+
+    void zoomChanged(int _factor);
 
 private:
     Ui::MainWindow *ui;
-    WebNavigator *m_webNav;
+    bool pageLoading;
 
 };
 
