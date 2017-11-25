@@ -17,17 +17,20 @@ MainWindow::MainWindow(QWidget *_parent) :
     move(settings.value("pos",QPoint(200,200)).toPoint());
 
     QUrl url = QUrl::fromUserInput(settings.value("url", HOME_PAGE).toString());
+    ui->webView->settings()->setIconDatabasePath(QDir::tempPath());
 
     ui->loadProgressBar->hide();
 
     connect(ui->webView, SIGNAL(loadStarted()), ui->loadProgressBar, SLOT(show()));
     connect(ui->webView, SIGNAL(loadStarted()), this, SLOT(startPageLoad()));
 
-    connect(ui->webView, SIGNAL(urlChanged(QUrl)), this, SLOT(refreshUrlBar(QUrl)));
     connect(ui->webView, SIGNAL(loadProgress(int)), ui->loadProgressBar, SLOT(setValue(int)));
 
     connect(ui->webView, SIGNAL(loadFinished(bool)), ui->loadProgressBar, SLOT(hide()));
     connect(ui->webView, SIGNAL(loadFinished(bool)), this, SLOT(finishPageLoad()));
+    connect(this, SIGNAL(setUrlTitle(QString)), ui->titleLabel, SLOT(setText(QString)));
+    connect(ui->webView, SIGNAL(urlChanged(QUrl)), this, SLOT(newUrl(QUrl)));
+    connect(ui->webView, SIGNAL(iconChanged()), this, SLOT(changeIcon()));
 
     connect(ui->adressBar, SIGNAL(returnPressed()), this, SLOT(urlInserted()));
 
@@ -76,7 +79,6 @@ MainWindow::~MainWindow()
 
     delete ui;
     delete zoomDial;
-    delete histBrowser;
 }
 
 void MainWindow::urlInserted()
@@ -87,12 +89,13 @@ void MainWindow::urlInserted()
         ui->webView->load(url);
 }
 
-void MainWindow::refreshUrlBar(QUrl _url)
+void MainWindow::newUrl(QUrl _url)
 {
     if(_url.toString() != "")
         ui->adressBar->setText(_url.toString());
 
-    qDebug() << _url.toString();
+    qDebug() << ui->webView->url().toString();
+    qDebug() << QDateTime::currentDateTime().toString();
 }
 
 void MainWindow::startPageLoad()
@@ -116,7 +119,9 @@ void MainWindow::finishPageLoad()
     else
         ui->pageNextButton->setEnabled(false);
 
-    historyList.append(ui->webView->url().toString());
+    emit setUrlTitle(ui->webView->title());
+
+    qDebug() << ui->webView->title();
 }
 
 void MainWindow::refreshClicked()
@@ -125,6 +130,12 @@ void MainWindow::refreshClicked()
         emit stopPageLoad();
     else
         emit refreshPage();
+}
+
+void MainWindow::changeIcon()
+{
+    ui->pageIcon->setIcon(ui->webView->icon());
+    qDebug() << "Icon changed";
 }
 
 void MainWindow::zoomChanged(int _factor)
@@ -177,8 +188,18 @@ void MainWindow::zoomDialogFinished(int _result)
 
 void MainWindow::displayHistoryWindow()
 {
-    histBrowser = new HistoryBrowser(&historyList, this);
+    histBrowser = new HistoryBrowser(ui->webView->history(), this);
     histBrowser->show();
+
+    connect(histBrowser, SIGNAL(finished (int)), this, SLOT(historyWindowFinished(int)));
+    connect(histBrowser, SIGNAL(finished (int)), histBrowser, SLOT(deleteLater()));
 }
+
+void MainWindow::historyWindowFinished(int _result)
+{
+    if(_result == QDialog::Accepted)
+        ui->webView->load(histBrowser->getChosenUrl());
+}
+
 
 

@@ -7,6 +7,8 @@
 #include <QWebHistory>
 #include <QSettings>
 #include <QMessageBox>
+#include <QVector>
+#include <QDir>
 
 #include "zoomdialog.h"
 #include "historybrowser.h"
@@ -28,14 +30,16 @@ public:
 signals:
     void refreshPage();
     void stopPageLoad();
+    void setUrlTitle(QString);
 
 public slots:
     void urlInserted();
-    void refreshUrlBar(QUrl _url);
+    void newUrl(QUrl _url);
 
     void startPageLoad();
     void finishPageLoad();
     void refreshClicked();
+    void changeIcon();
 
     void zoomChanged(int _factor);
 
@@ -46,14 +50,13 @@ public slots:
     void zoomDialogFinished(int _result);
 
     void displayHistoryWindow();
+    void historyWindowFinished(int _result);
 
 private:
     Ui::MainWindow *ui;
     bool pageLoading;
     ZoomDialog *zoomDial;
     HistoryBrowser *histBrowser;
-    QStringList historyList;
-
 };
 
 #endif // MAINWINDOW_H
