@@ -17,8 +17,9 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0" rowspan="2">
      <widget class="QWebView" name="webView">
-      <zorder>gridLayoutWidget</zorder>
-      <zorder>widget</zorder>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;View of the page.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
      </widget>
     </item>
     <item row="0" column="0">
@@ -28,11 +29,17 @@
       </property>
       <item>
        <widget class="QPushButton" name="pageBackButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="maximumSize">
          <size>
           <width>30</width>
           <height>30</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press to back to the previous page.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>&lt;</string>
@@ -47,13 +54,20 @@
           <height>30</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press to go to return to the next page.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>&gt;</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="adressBar"/>
+       <widget class="QLineEdit" name="adressBar">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Put here desired web adress or check currently displayed page's url.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="refreshButton">
@@ -63,6 +77,9 @@
           <height>30</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press to reload the page or to stop loading of the page.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>R</string>
         </property>
@@ -71,30 +88,51 @@
      </layout>
     </item>
     <item row="4" column="0">
-     <layout class="QGridLayout" name="gridLayout_2">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetFixedSize</enum>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>4</number>
       </property>
-      <item row="2" column="0">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetNoConstraint</enum>
+      </property>
+      <item>
        <widget class="QProgressBar" name="loadProgressBar">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
           <width>100</width>
-          <height>10</height>
+          <height>12</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Page loading progress bar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="value">
          <number>0</number>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QWidget" name="widget" native="true">
+      <item>
+       <widget class="QWidget" name="zoomWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
           <width>300</width>
           <height>100</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zoom change section.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
@@ -118,7 +156,7 @@
             <number>10</number>
            </property>
            <property name="maximum">
-            <number>500</number>
+            <number>300</number>
            </property>
            <property name="value">
             <number>100</number>
@@ -138,12 +176,12 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
+             <width>45</width>
              <height>16777215</height>
             </size>
            </property>
            <property name="text">
-            <string>100</string>
+            <string> 100 %</string>
            </property>
           </widget>
          </item>
@@ -163,6 +201,24 @@
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionHistory"/>
+    <addaction name="actionZoom"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -173,6 +229,43 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="toolTip">
+    <string>Display information about the program.</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+   <property name="toolTip">
+    <string>Display ionformation about Qt framework.</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionHistory">
+   <property name="text">
+    <string>History</string>
+   </property>
+   <property name="toolTip">
+    <string>Pages history of the browser.</string>
+   </property>
+  </action>
+  <action name="actionZoom">
+   <property name="text">
+    <string>Zoom factor</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom factor of the page settings.</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -184,5 +277,38 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>webView</sender>
+   <signal>statusBarMessage(QString)</signal>
+   <receiver>statusBar</receiver>
+   <slot>showMessage(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>288</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

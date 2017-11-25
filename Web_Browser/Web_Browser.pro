@@ -15,9 +15,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    webnavigator.cpp
+    zoomdialog.cpp \
+    historybrowser.cpp
 
 HEADERS  += mainwindow.h \
-    webnavigator.h
+    zoomdialog.h \
+    historybrowser.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    zoomdialog.ui \
+    historybrowser.ui
