@@ -17,13 +17,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     zoomdialog.cpp \
     historybrowser.cpp \
-    webbrowsermodel.cpp
+    webbrowsermodel.cpp \
+    findtextdial.cpp
 
 HEADERS  += mainwindow.h \
     zoomdialog.h \
     historybrowser.h \
-    webbrowsermodel.h
+    webbrowsermodel.h \
+    findtextdial.h
 
 FORMS    += mainwindow.ui \
     zoomdialog.ui \
-    historybrowser.ui
+    historybrowser.ui \
+    findtextdial.ui

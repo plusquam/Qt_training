@@ -66,5 +66,7 @@
 #Qt Creator Debug and Release build directories
 *Desktop-Debug
 *Desktop-Release
+latex
+html
 
 # End of https://www.gitignore.io/api/c++,qtcreator
